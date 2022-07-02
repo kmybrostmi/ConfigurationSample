@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
+builder.Configuration.AddUserSecrets("249eaf35-5ce7-4574-ab6c-71c6ce073cc8");
 
 //builder.Services.Configure<LocationOptions>(c =>
 //{
@@ -18,6 +19,14 @@ builder.Configuration.Bind("Course",courseOption);
 builder.Services.AddSingleton<CourseOption>(courseOption);
 
 var app = builder.Build();
+
+app.MapGet("/us", async (HttpContext httpContext, IConfiguration configs) =>
+{
+    httpContext.Response.StatusCode = 200;
+    httpContext.Response.ContentType = "text/html";
+    await httpContext.Response.WriteAsJsonAsync($"<h1>{config["MyUserName"]} - {config["Password"]}</h1>");
+
+});
 
 app.MapGet("/ioption1", async (HttpContext httpContext, IOptions<LocationOptions> options ) =>
 {
@@ -70,4 +79,5 @@ app.MapGet("/ioption2", async (HttpContext httpContext, IOptions<LocationOptions
 app.MapGet("/", () => "Hello World!");
 
 app.Run();
+
 
